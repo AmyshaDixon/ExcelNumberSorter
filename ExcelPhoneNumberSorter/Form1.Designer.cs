@@ -45,7 +45,7 @@
             // lblDelete
             // 
             this.lblDelete.AutoSize = true;
-            this.lblDelete.Location = new System.Drawing.Point(38, 333);
+            this.lblDelete.Location = new System.Drawing.Point(38, 346);
             this.lblDelete.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.lblDelete.Name = "lblDelete";
             this.lblDelete.Size = new System.Drawing.Size(131, 13);
@@ -56,7 +56,7 @@
             // 
             this.lblCompare.AccessibleDescription = "";
             this.lblCompare.AutoSize = true;
-            this.lblCompare.Location = new System.Drawing.Point(38, 379);
+            this.lblCompare.Location = new System.Drawing.Point(38, 392);
             this.lblCompare.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.lblCompare.Name = "lblCompare";
             this.lblCompare.Size = new System.Drawing.Size(128, 13);
@@ -67,7 +67,7 @@
             // 
             this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDelete.ForeColor = System.Drawing.Color.Blue;
-            this.btnDelete.Location = new System.Drawing.Point(349, 322);
+            this.btnDelete.Location = new System.Drawing.Point(349, 335);
             this.btnDelete.Margin = new System.Windows.Forms.Padding(1);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(101, 31);
@@ -80,7 +80,7 @@
             // 
             this.tbDelete.Enabled = false;
             this.tbDelete.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.tbDelete.Location = new System.Drawing.Point(174, 330);
+            this.tbDelete.Location = new System.Drawing.Point(174, 343);
             this.tbDelete.Margin = new System.Windows.Forms.Padding(1);
             this.tbDelete.MinimumSize = new System.Drawing.Size(152, 4);
             this.tbDelete.Name = "tbDelete";
@@ -91,7 +91,7 @@
             // 
             this.tbCompare.Enabled = false;
             this.tbCompare.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.tbCompare.Location = new System.Drawing.Point(174, 378);
+            this.tbCompare.Location = new System.Drawing.Point(174, 391);
             this.tbCompare.Margin = new System.Windows.Forms.Padding(1);
             this.tbCompare.MinimumSize = new System.Drawing.Size(152, 4);
             this.tbCompare.Name = "tbCompare";
@@ -102,7 +102,7 @@
             // 
             this.btnCompare.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCompare.ForeColor = System.Drawing.Color.Blue;
-            this.btnCompare.Location = new System.Drawing.Point(349, 370);
+            this.btnCompare.Location = new System.Drawing.Point(349, 383);
             this.btnCompare.Margin = new System.Windows.Forms.Padding(1);
             this.btnCompare.Name = "btnCompare";
             this.btnCompare.Size = new System.Drawing.Size(101, 31);
@@ -115,7 +115,7 @@
             // 
             this.btnParse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnParse.ForeColor = System.Drawing.Color.Green;
-            this.btnParse.Location = new System.Drawing.Point(135, 490);
+            this.btnParse.Location = new System.Drawing.Point(135, 503);
             this.btnParse.Margin = new System.Windows.Forms.Padding(1);
             this.btnParse.Name = "btnParse";
             this.btnParse.Size = new System.Drawing.Size(104, 43);
@@ -138,7 +138,7 @@
             // 
             this.btnExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.btnExit.Location = new System.Drawing.Point(263, 490);
+            this.btnExit.Location = new System.Drawing.Point(263, 503);
             this.btnExit.Margin = new System.Windows.Forms.Padding(1);
             this.btnExit.Name = "btnExit";
             this.btnExit.Size = new System.Drawing.Size(104, 43);
@@ -150,7 +150,7 @@
             // lblAreaCode
             // 
             this.lblAreaCode.AutoSize = true;
-            this.lblAreaCode.Location = new System.Drawing.Point(38, 424);
+            this.lblAreaCode.Location = new System.Drawing.Point(38, 437);
             this.lblAreaCode.Name = "lblAreaCode";
             this.lblAreaCode.Size = new System.Drawing.Size(130, 13);
             this.lblAreaCode.TabIndex = 9;
@@ -159,7 +159,7 @@
             // tbAreaCode
             // 
             this.tbAreaCode.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.tbAreaCode.Location = new System.Drawing.Point(174, 421);
+            this.tbAreaCode.Location = new System.Drawing.Point(174, 434);
             this.tbAreaCode.Margin = new System.Windows.Forms.Padding(1);
             this.tbAreaCode.MaxLength = 3;
             this.tbAreaCode.MinimumSize = new System.Drawing.Size(152, 4);
@@ -171,7 +171,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(505, 576);
+            this.ClientSize = new System.Drawing.Size(505, 599);
             this.Controls.Add(this.tbAreaCode);
             this.Controls.Add(this.lblAreaCode);
             this.Controls.Add(this.btnExit);

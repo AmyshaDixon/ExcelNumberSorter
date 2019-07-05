@@ -9,68 +9,68 @@ namespace PhoneNumberSorter
     public partial class Form1 : Form
     {
         // Create variables
-        string FILE_CONTENTS_DELETE = string.Empty;
-        string FILE_CONTENTS_COMPARE = string.Empty;
+        string SHEET_CONTENTS_DELETE = string.Empty;
+        string SHEET_CONTENTS_COMPARE = string.Empty;
 
         public Form1()
         {
             InitializeComponent();
 
             //Adds directions to lblDirections at the top of the app when app opens
-            lblDirections.Text = "This is a program that sorts through and compares two given .txt " +
-                "files that each contain a list of phone numbers; text files must use a one-phone-number-per-line " +
-                "format. Below, click each 'Browse' button to upload a file to the corresponding box." +
-                "The first box being the file that you want to delete from, and the second file being " +
-                "for comparison purposes only. \n \nAfter your files are selected, you can input an area code " +
-                "for any phone numbers you would like to keep; these will not be deleted from the first list. " +
-                "You may also leave the text box empty if this option is not needed. Keep in mind that any " +
-                "area code entered must be three digits long. Letters and two-digit numbers will not be accepted. " +
-                "\n \nWhen 'Parse' is clicked, the program will search for differences between the two given .txt " +
-                "files and delete those numbers from the first given list as long as it does not begin with the area " +
-                "code given. If an area code is not given, then all differening phone numbers will be removed from the " +
-                "first list. This new list will then be stored in a .txt file, which you will be asked to save to your " +
-                "desktop with a popup. \n \nTo exit, either click the 'x' in the upper right corner or click on 'exit'.";
+            lblDirections.Text = "This is a program that sorts through and compares two given Excel sheet " +
+                "files that each contain a column list of phone numbers. Below, click each 'Browse' button to " +
+                "upload a file to the corresponding box. The first box being the file that you want to delete from, " +
+                "and the second box being the file that is for comparison purposes only. \n \nAfter your files are " +
+                "selected, you can input an area code for any phone numbers (including their rows) you would like to " +
+                "keep; these will not be deleted from the first sheet. You may also leave the textbox empty if this " +
+                "option is not needed. Keep in mind that any area code entered must be three-digits long. Letters and " +
+                "two-digit numbers will not be accepted. \n \nWhen 'Parse' is clicked, the program will search for any " +
+                "phone number differences between the two given Excel files and delete those specific numbers from the " +
+                "first given sheet as long as it does not begin with the area code provided. If an area code is not given, " +
+                "then all differening phone numbers will be removed from the first sheet despite area code. This new Excel " +
+                "sheet can then be stored to your computer via a popup. \n \nTo exit, either click the 'x' in the upper " +
+                "right corner or click on 'exit'.";
         }
 
         /// <summary>
-        /// Allows user to choose a .txt file to delete numbers from
+        /// Allows user to choose an excel file to delete numbers from
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void BtnDelete_Click(object sender, EventArgs e)
         {
-            ImportUserFile(true);
+            ImportUserWorksheet(true);
         }
 
         /// <summary>
-        /// Allows user to choose a .txt file to compare the first list to
+        /// Allows user to choose an excel file to compare the first list to
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void BtnCompare_Click(object sender, EventArgs e)
         {
-            ImportUserFile(false);
+            ImportUserWorksheet(false);
         }
 
         /// <summary>
-        /// Opens a dialog for the user to select files from their
-        /// computer
+        /// Opens a dialog so that the user can select excel worksheets from
+        /// their computer
         /// </summary>
-        /// <param name="fileToggle"> Represents which variable to store the file
-        /// information into; true for FILE_CONTENTS_DELETE and false for
-        /// FILE_CONTENTS_COMPARE</param>
-        private void ImportUserFile(bool fileToggle)
+        /// <param name="sheetToggle"> Represents which variable to store the sheet
+        /// information into; true for SHEET_CONTENTS_DELETE and false for
+        /// SHEET_CONTENTS_COMPARE</param>
+        private void ImportUserWorksheet(bool sheetToggle)
         {
             using (OpenFileDialog openFile = new OpenFileDialog())
             {
                 openFile.InitialDirectory = "c:\\"; // Automatically directs user to c:\\ path when pop-up opens
-                openFile.Filter = "txt files|*.txt"; // Restricts user to uploading only .txt files
-                openFile.RestoreDirectory = true; // Resets director to original path
+                openFile.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm"; // Restricts user to uploading only excel files
+                openFile.RestoreDirectory = true; // Resets directory to original path
 
                 if (openFile.ShowDialog() == DialogResult.OK)
                 {
                     // First display file path in tbDelete for user to see
-                    if (fileToggle)
+                    if (sheetToggle)
                     {
                         tbDelete.Text = openFile.SafeFileName;
                     }
@@ -85,13 +85,13 @@ namespace PhoneNumberSorter
                     // Store file contents into FILE_CONTENTS_DELETE variable
                     using (StreamReader fileReader = new StreamReader(fileStream))
                     {
-                        if (fileToggle)
+                        if (sheetToggle)
                         {
-                            FILE_CONTENTS_DELETE = fileReader.ReadToEnd(); // Makes one big string
+                            SHEET_CONTENTS_DELETE = fileReader.ReadToEnd(); // Makes one big string
                         }
                         else
                         {
-                            FILE_CONTENTS_COMPARE = fileReader.ReadToEnd();
+                            SHEET_CONTENTS_COMPARE = fileReader.ReadToEnd();
                         }
                     }
                 }
@@ -118,8 +118,8 @@ namespace PhoneNumberSorter
                 List<long> comparableList = new List<long>();
 
                 //Separate list data
-                string[] deletableLines = FILE_CONTENTS_DELETE.Split('\n');
-                string[] comparableLines = FILE_CONTENTS_COMPARE.Split('\n');
+                string[] deletableLines = SHEET_CONTENTS_DELETE.Split('\n');
+                string[] comparableLines = SHEET_CONTENTS_COMPARE.Split('\n');
 
                 // Store line data (numbers) into arrays
                 LineDataToArray(deletableList, deletableLines);
