@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Excel = Microsoft.Office.Interop.Excel;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -61,6 +62,18 @@ namespace PhoneNumberSorter
         /// SHEET_CONTENTS_COMPARE</param>
         private void ImportUserWorksheet(bool sheetToggle)
         {
+            // Initialize Excel application objects
+            Excel.Application xlApp;
+            Excel.Workbook xlWorkbook;
+            Excel.Worksheet xlWorksheet;
+            Excel.Range xlRange;
+
+            //Create variables for Excel rows/columns
+            int rowCount;
+            int columnCount;
+            int row = 0;
+            int column = 0;
+
             using (OpenFileDialog openFile = new OpenFileDialog())
             {
                 openFile.InitialDirectory = "c:\\"; // Automatically directs user to c:\\ path when pop-up opens
@@ -79,11 +92,16 @@ namespace PhoneNumberSorter
                         tbCompare.Text = openFile.SafeFileName;
                     }
 
-                    // Retrieve contents of file
-                    var fileStream = openFile.OpenFile();
+                    // Retrieve contents of file ****************************************************************************
+                    xlApp = new Excel.Application();
+                    xlWorkbook = xlApp.Workbooks.Open(openFile.FileName);
+                    //MessageBox.Show(openFile.FileName);
+                    xlWorksheet = xlWorkbook.Worksheets[1]; //Starts at 1 for Excel sheets
+                    xlRange = xlWorksheet.UsedRange; //Holds the int range of information availabe in the document
+                    //MessageBox.Show(xlRange);
 
                     // Store file contents into FILE_CONTENTS_DELETE variable
-                    using (StreamReader fileReader = new StreamReader(fileStream))
+                    /*using (StreamReader fileReader = new StreamReader(fileStream))
                     {
                         if (sheetToggle)
                         {
@@ -93,7 +111,7 @@ namespace PhoneNumberSorter
                         {
                             SHEET_CONTENTS_COMPARE = fileReader.ReadToEnd();
                         }
-                    }
+                    }*/
                 }
             }
         }
