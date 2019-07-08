@@ -3,15 +3,20 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace PhoneNumberSorter
 {
     public partial class Form1 : Form
     {
-        // Create variables
-        string SHEET_CONTENTS_DELETE = string.Empty;
-        string SHEET_CONTENTS_COMPARE = string.Empty;
+        //Create Variables
+        string DELETABLE_LINE;
+        string COMPARABLE_LINE;
+
+        // Create lists
+        List<string> DELETEABLE_LIST = new List<string>();
+        List<string> COMPARABLE_LIST = new List<string>();
 
         public Form1()
         {
@@ -62,7 +67,7 @@ namespace PhoneNumberSorter
         /// SHEET_CONTENTS_COMPARE</param>
         private void ImportUserWorksheet(bool sheetToggle)
         {
-            // Initialize Excel application objects
+            //Initialize Excel application objects
             Excel.Application xlApp;
             Excel.Workbook xlWorkbook;
             Excel.Worksheet xlWorksheet;
@@ -71,9 +76,8 @@ namespace PhoneNumberSorter
             //Create variables for Excel rows/columns
             int rowCount;
             int columnCount;
-            int row = 0;
-            int column = 0;
 
+            //Open file dialog
             using (OpenFileDialog openFile = new OpenFileDialog())
             {
                 openFile.InitialDirectory = "c:\\"; // Automatically directs user to c:\\ path when pop-up opens
@@ -97,23 +101,47 @@ namespace PhoneNumberSorter
                     xlWorkbook = xlApp.Workbooks.Open(openFile.FileName);
                     //MessageBox.Show(openFile.FileName);
                     xlWorksheet = xlWorkbook.Worksheets[1]; //Starts at 1 for Excel sheets
-                    xlRange = xlWorksheet.UsedRange; //Holds the int range of information availabe in the document
-                    //MessageBox.Show(xlRange);
+                    xlRange = xlWorksheet.UsedRange; //Holds the int range of all available columns/rows in document
+                    rowCount = xlRange.Rows.Count;
+                    columnCount = xlRange.Columns.Count;
+                    //MessageBox.Show("Rows: " + rowCount + "\nColumns: " + columnCount);
 
-                    // Store file contents into FILE_CONTENTS_DELETE variable
-                    /*using (StreamReader fileReader = new StreamReader(fileStream))
+                    //Store file contents into _LIST variables with one row per index
+                    for (int r = 4; r <= rowCount; r++) //Starting at 4 to move past infornational rows; should write code to look for automatically; error with COMPARABLE
                     {
+                        for (int c = 1; c <= columnCount; c++)
+                        {
+                            if (sheetToggle)
+                            {
+                                DELETABLE_LINE += xlRange.Cells[r, c].Value2 + "|";
+                            }
+                            else
+                            {
+                                COMPARABLE_LINE += xlRange.Cells[r, c].Value2 + "|";
+                            }
+                        }
+
+                        //Add each row string to list
                         if (sheetToggle)
                         {
-                            SHEET_CONTENTS_DELETE = fileReader.ReadToEnd(); // Makes one big string
+                            DELETEABLE_LIST.Add(DELETABLE_LINE);
+                            DELETABLE_LINE = ""; //Resets string to be used again
                         }
                         else
                         {
-                            SHEET_CONTENTS_COMPARE = fileReader.ReadToEnd();
+                            COMPARABLE_LIST.Add(COMPARABLE_LINE);
+                            COMPARABLE_LINE = "";
                         }
-                    }*/
-                }
-            }
+                    }
+                    
+                //De-initialize Excel objects
+                xlWorkbook.Close(true, null, null);
+                xlApp.Quit();
+                Marshal.ReleaseComObject(xlWorksheet);
+                Marshal.ReleaseComObject(xlWorkbook);
+                Marshal.ReleaseComObject(xlApp);
+                }            
+            }            
         }
         
         /// <summary>
@@ -126,31 +154,27 @@ namespace PhoneNumberSorter
         private void BtnParse_Click(object sender, EventArgs e)
         {
             // Save contents of tbAreaCode
-            string areaCode = tbAreaCode.Text;
+           /* string areaCode = tbAreaCode.Text;
 
             //Make sure there are files selected
             if (!String.IsNullOrEmpty(tbDelete.Text) && !String.IsNullOrEmpty(tbCompare.Text))
             {
-                // Create lists
-                List<long> deletableList = new List<long>();
-                List<long> comparableList = new List<long>();
-
                 //Separate list data
-                string[] deletableLines = SHEET_CONTENTS_DELETE.Split('\n');
-                string[] comparableLines = SHEET_CONTENTS_COMPARE.Split('\n');
+                //string[] deletableLines = SHEET_CONTENTS_DELETE.Split('\n');
+                //string[] comparableLines = SHEET_CONTENTS_COMPARE.Split('\n');
 
                 // Store line data (numbers) into arrays
-                LineDataToArray(deletableList, deletableLines);
-                LineDataToArray(comparableList, comparableLines);
+                LineDataToArray(DELETEABLE_LIST, deletableLines);
+                LineDataToArray(COMPARABLE_LIST, comparableLines);
 
                 // Make sure area code is either three digits or empty, returns true
                 //if area code is acceptable and false if not
                 if(CheckAreaCode(areaCode))
                 {
-                    CompareListsWithAreaCode(deletableList, comparableList, Convert.ToInt16(areaCode));
+                    CompareListsWithAreaCode(DELETEABLE_LIST, COMPARABLE_LIST, Convert.ToInt16(areaCode));
 
                     //Provide user with a file to save
-                    SaveNewFile(deletableList);
+                    SaveNewFile(DELETEABLE_LIST);
 
                     //Clear textboxes
                     ClearTextBoxes();
@@ -159,10 +183,10 @@ namespace PhoneNumberSorter
                 {
                     if(String.IsNullOrWhiteSpace(areaCode))
                     {
-                        CompareListsWithNoAreaCode(deletableList, comparableList);
+                        CompareListsWithNoAreaCode(DELETEABLE_LIST, COMPARABLE_LIST);
 
                         //Provide user with a file to save
-                        SaveNewFile(deletableList);
+                        SaveNewFile(DELETEABLE_LIST);
 
                         //Clear textboxes
                         ClearTextBoxes();
@@ -173,7 +197,7 @@ namespace PhoneNumberSorter
             {
                 MessageBox.Show("Please make sure two files are selected",
                     "Oh, no!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
+            }*/
         }
 
         /// <summary>
