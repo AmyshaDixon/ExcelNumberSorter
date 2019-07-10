@@ -1,11 +1,7 @@
-﻿using Excel = Microsoft.Office.Interop.Excel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Microsoft.Office.Interop.Excel;
 
 namespace PhoneNumberSorter
 {
@@ -127,7 +123,7 @@ namespace PhoneNumberSorter
                  if(CheckAreaCode(areaCode))
                  {
                     //Initialize Excel application objects
-                    Excel.Application xlApp;
+                    /*Excel.Application xlApp;
                     Excel.Workbook xlWorkbook;
                     Excel.Worksheet xlWorksheet;
                     Excel.Range xlRange;
@@ -152,7 +148,7 @@ namespace PhoneNumberSorter
                         }
                     }
 
-                    MessageBox.Show("Done!");
+                    MessageBox.Show("Done!");*/
 
                     //CompareListsWithAreaCode(DELETEABLE_LIST, COMPARABLE_LIST, Convert.ToInt16(areaCode));
 
@@ -194,10 +190,10 @@ namespace PhoneNumberSorter
             int rowCount; //Excel rows
 
             //Initialize Excel application objects
-            Excel.Application xlApp;
+            /*Excel.Application xlApp;
             Excel.Workbook xlWorkbook;
             Excel.Worksheet xlWorksheet;
-            Excel.Range xlRange;            
+            Excel.Range xlRange;   
             
             // Retrieve file contents
             xlApp = new Excel.Application();
@@ -218,7 +214,7 @@ namespace PhoneNumberSorter
             xlApp.Quit();
             Marshal.ReleaseComObject(xlWorksheet);
             Marshal.ReleaseComObject(xlWorkbook);
-            Marshal.ReleaseComObject(xlApp);
+            Marshal.ReleaseComObject(xlApp); */
 
             //Return list
             return comparableList;
