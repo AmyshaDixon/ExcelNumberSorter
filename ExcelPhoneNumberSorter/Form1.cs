@@ -1,6 +1,11 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace PhoneNumberSorter
@@ -98,66 +103,63 @@ namespace PhoneNumberSorter
         private void BtnParse_Click(object sender, EventArgs e)
         {
             // Save contents of tbAreaCode
-           string areaCode = tbAreaCode.Text; //A string so that each number can be accessed by index
+           string areaCode = tbAreaCode.Text; //A string so that each number can be accessed later by index
 
             //Make sure there are files selected
             if (!String.IsNullOrEmpty(tbDelete.Text) && !String.IsNullOrEmpty(tbCompare.Text))
             {
-                //Variables
-                int rowCount; //Excel rows
-                int columnCount; // Excel columns
+                // Make sure area code is either three digits or empty, returns true
+                //if area code is acceptable and false if not
+                if (CheckAreaCode(areaCode))
+                {
+                    //Variables
+                    int rowCount; //Excel rows
+                    int start = 0; //The row index to begin at
 
-                //Pull data from second given file
-                List<long> comparableList = SheetToArray();
+                    //Pull data from second given file
+                    List<long> comparableList = SheetToArray();
 
-                //Separate list data
-                //string[] deletableLines = SHEET_CONTENTS_DELETE.Split('\n');
-                //string[] comparableLines = SHEET_CONTENTS_COMPARE.Split('\n');
-
-                // Store line data (numbers) into arrays
-                /* LineDataToArray(DELETEABLE_LIST, deletableLines);
-                 LineDataToArray(COMPARABLE_LIST, comparableLines); */
-
-                 // Make sure area code is either three digits or empty, returns true
-                 //if area code is acceptable and false if not
-                 if(CheckAreaCode(areaCode))
-                 {
-                    //Initialize Excel application objects
-                    /*Excel.Application xlApp;
-                    Excel.Workbook xlWorkbook;
-                    Excel.Worksheet xlWorksheet;
-                    Excel.Range xlRange;
-
-                    // Retrieve file contents
-                    xlApp = new Excel.Application();
-                    xlWorkbook = xlApp.Workbooks.Open(DELETABLE_FILE_NAME, 0, false);
-                    xlWorksheet = xlWorkbook.Worksheets[1]; //Starts at 1 for Excel sheets
-                    xlRange = xlWorksheet.UsedRange; //Holds the int range of all available columns/rows in document
-                    rowCount = xlRange.Rows.Count;
-                    columnCount = xlRange.Columns.Count;
-
-                    //Compare numbers from first given list to seconf given list(comparableList)
-                    for (int r = 4; r <= rowCount; r++)
+                    using (SpreadsheetDocument openSheet = SpreadsheetDocument.Open(DELETABLE_FILE_NAME, true))
                     {
-                        long number = Convert.ToInt64(xlRange.Cells[r, 1].Value2);
-                        if (!comparableList.Contains(number) &&
-                            number / 10000000 != Convert.ToInt16(areaCode))
+                        //Initialize Excel objects
+                        WorkbookPart wbPart = openSheet.WorkbookPart;
+                        WorksheetPart wsPart = wbPart.WorksheetParts.First();
+                        SheetData sData = wsPart.Worksheet.Elements<SheetData>().First();
+                        rowCount = sData.Elements<Row>().Count();
+
+                        //Find first row containing a number
+                        while (Regex.IsMatch(GetCellValue(wbPart, start).InnerText.ToLower(), "[a-z]")) //If cell contains letter, skip to next
                         {
-                            ((Range)xlWorksheet.Rows[r]).Delete(XlDeleteShiftDirection.xlShiftUp);
-                            xlWorkbook.Save();
+                            start++;
                         }
+
+                        MessageBox.Show(start.ToString());
+
+                        //Compare numbers from first given list to second given list(comparableList)
+                        for (int r = start; r <= rowCount; r++)
+                        {
+                            long number = Convert.ToInt64(GetCellValue(wbPart, r).InnerText); //Only looking at first column
+
+                            MessageBox.Show(number.ToString());
+
+                            /*if (!comparableList.Contains(number) &&
+                                number / 10000000 != Convert.ToInt16(areaCode))
+                            {
+                                ((Range)xlWorksheet.Rows[r]).Delete(XlDeleteShiftDirection.xlShiftUp);
+                                xlWorkbook.Save();
+                            }*/
+                        }
+
+                        MessageBox.Show("Done!");
                     }
-
-                    MessageBox.Show("Done!");*/
-
                     //CompareListsWithAreaCode(DELETEABLE_LIST, COMPARABLE_LIST, Convert.ToInt16(areaCode));
 
                     //Provide user with a file to save
                     //SaveNewFile(DELETEABLE_LIST);
 
-                     //Clear textboxes
-                     //ClearTextBoxes();
-                 }
+                    //Clear textboxes
+                    //ClearTextBoxes();
+                }
                  /*else
                  {
                      if(String.IsNullOrWhiteSpace(areaCode))
@@ -187,39 +189,53 @@ namespace PhoneNumberSorter
         {
             //Variables       
             List<long> comparableList = new List<long>();
-            int rowCount; //Excel rows
 
-            //Initialize Excel application objects
-            /*Excel.Application xlApp;
-            Excel.Workbook xlWorkbook;
-            Excel.Worksheet xlWorksheet;
-            Excel.Range xlRange;   
-            
-            // Retrieve file contents
-            xlApp = new Excel.Application();
-            xlWorkbook = xlApp.Workbooks.Open(COMPARABLE_FILE_NAME);
-            xlWorksheet = xlWorkbook.Worksheets[1]; //Starts at 1 for Excel sheets
-            xlRange = xlWorksheet.UsedRange; //Holds the int range of all available columns/rows in document
-            rowCount = xlRange.Rows.Count;
-
-            //Look at each row and delete by number if does not meet requirements
-            for (int r = 4; r <= rowCount; r++) //Starting at 4 to move past infornational rows; should write code to look for automatically; error with COMPARABLE
+            //Retrieve file contents
+            using(SpreadsheetDocument openSheet = SpreadsheetDocument.Open(COMPARABLE_FILE_NAME, false))
             {
-                long number = Convert.ToInt64(xlRange.Cells[r, 1].Value2); //Only looking at first column which contains the phone number
-                comparableList.Add(number);
+                //Variables
+                string holder = "";
+                int rowCount; //Number of Excel rows
+
+                //Initialize Excel objects
+                WorkbookPart wbPart = openSheet.WorkbookPart;
+                WorksheetPart wsPart = wbPart.WorksheetParts.First();
+                SheetData sData = wsPart.Worksheet.Elements<SheetData>().First();
+                rowCount = sData.Elements<Row>().Count();
+
+                //Store data into array
+               for(int r = 0; r < rowCount; r++) //Only looking at column 1
+                {
+                    holder = GetCellValue(wbPart, r).InnerText;
+                    comparableList.Add(Convert.ToInt64(holder));
+
+                    //Clear holder to use again
+                    holder = "";
+                }
+
+                //TO DO: Clean up list; make sure there are no column/information cells included
+                /*for (int i = 0; i < comparableList.Count; i++)
+                {
+
+                }*/
             }
-                    
-            //De-initialize Excel objects
-            xlWorkbook.Close(true, null, null);
-            xlApp.Quit();
-            Marshal.ReleaseComObject(xlWorksheet);
-            Marshal.ReleaseComObject(xlWorkbook);
-            Marshal.ReleaseComObject(xlApp); */
 
             //Return list
             return comparableList;
         }
-        
+
+        /// <summary>
+        /// Helper method that returns the SharedStringItem stored in the cell
+        /// at the given index
+        /// </summary>
+        /// <param name="workbookPart"></param>
+        /// <param name="id">The index of the cell required</param>
+        /// <returns></returns>
+        private static SharedStringItem GetCellValue(WorkbookPart workbookPart, int id)
+        {
+            return workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ElementAt(id);
+        }
+
         /// <summary>
         /// Makes sure area code is only used when it is valid: three numeric characters
         /// or nothing at all
