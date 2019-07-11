@@ -128,9 +128,24 @@ namespace PhoneNumberSorter
                         rowCount = sData.Elements<Row>().Count();
 
                         //Find first row containing a number
-                        while (Regex.IsMatch(GetCellValue(wbPart, start).InnerText.ToLower(), "[a-z]")) //If cell contains letter, skip to next
+                        /*while (Regex.IsMatch(GetCellValue(wbPart, start).InnerText.ToLower(), "[a-z]")) //If cell contains letter, skip to next
                         {
                             start++;
+                        }*/
+
+                        foreach (Row r in sData.Elements<Row>())
+                        {
+                            foreach (Cell c in r.Elements<Cell>())
+                            {
+                                if(Regex.IsMatch(GetCellValue(wbPart, start).InnerText.ToLower(), "[a-z]")) //Not going to work b/c there is another column w/ 
+                                {                                                                                                                                     // a phone number; need to find a way to only look @ first cell
+                                    start++;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
                         }
 
                         MessageBox.Show(start.ToString());
